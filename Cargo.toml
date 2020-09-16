@@ -14,6 +14,11 @@ name = "app"
 [dependencies]
 actix-web = "2.0.0"
 actix-rt = "1.1.1"
+serde = { version = "1", features = ["derive"] }
+sqlx = { version = "0.4.0-beta.1", default-features = false, features = ["runtime-tokio", "macros", "postgres", "uuid", "chrono", "migrate"] }
+config = "0.10.1"
+uuid = { version = "0.8.1", features = ["v4"] }
+chrono = "0.4.15"
 
 [dev-dependencies]
 reqwest = "0.10.6"
