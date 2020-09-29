@@ -19,7 +19,14 @@ sqlx = { version = "0.4.0-beta.1", default-features = false, features = ["runtim
 config = "0.10.1"
 uuid = { version = "0.8.1", features = ["v4"] }
 chrono = "0.4.15"
+tracing = "0.1.15"
+tracing-futures = "0.2.4"
+tracing-subscriber = { version = "0.2.12", features = ["registry", "env-filter"] }
+tracing-bunyan-formatter = "0.1.6"
+tracing-log = "0.1.1"
+tracing-actix-web = "0.1.1"
 
 [dev-dependencies]
 reqwest = "0.10.6"
 tokio = "0.2.21"
+lazy_static = "1.4.0"
