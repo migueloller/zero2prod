@@ -1,0 +1,42 @@
+{
+  "db": "PostgreSQL",
+  "446ad9a68a5f239fce81cad43acf3e4850b15a2f3cb1efed09c3b38edb31a033": {
+    "query": "\n        insert into subscriptions (id, email, name, subscribed_at)\n        values ($1, $2, $3, $4)\n        ",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Text",
+          "Text",
+          "Timestamptz"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "b20308091f9773505ad85af1b8397805cffef5973317e43806608807534064f7": {
+    "query": "select email, name from subscriptions",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "email",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 1,
+          "name": "name",
+          "type_info": "Text"
+        }
+      ],
+      "parameters": {
+        "Left": []
+      },
+      "nullable": [
+        false,
+        false
+      ]
+    }
+  }
+}
