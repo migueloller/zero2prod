@@ -14,8 +14,12 @@ jobs:
     services:
       postgres:
         image: postgres
-    env:
-      POSTGRES_HOST: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -30,7 +34,7 @@ jobs:
       - name: Migrate database
         run: |
           sudo apt-get install libpq-dev -y
-          cargo install --version=0.1.0-beta.1 sqlx-cli --no-default-features --features postgres
+          cargo install --version=0.5.1 sqlx-cli --locked sqlx-cli --no-default-features --features postgres
           SKIP_DOCKER=true ./scripts/init_db.sh
 
       - name: Check sqlx metadata file
@@ -70,8 +74,12 @@ jobs:
     services:
       postgres:
         image: postgres
-    env:
-      POSTGRES_HOST: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -89,7 +97,7 @@ jobs:
       - name: Migrate database
         run: |
           sudo apt-get install libpq-dev -y
-          cargo install --version=0.1.0-beta.1 sqlx-cli --no-default-features --features postgres
+          cargo install --version=0.5.1 sqlx-cli --locked sqlx-cli --no-default-features --features postgres
           SKIP_DOCKER=true ./scripts/init_db.sh
 
       - name: Run cargo-clippy
@@ -104,8 +112,12 @@ jobs:
     services:
       postgres:
         image: postgres
-    env:
-      POSTGRES_HOST: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
@@ -120,7 +132,7 @@ jobs:
       - name: Migrate database
         run: |
           sudo apt-get install libpq-dev -y
-          cargo install --version=0.1.0-beta.1 sqlx-cli --no-default-features --features postgres
+          cargo install --version=0.5.1 sqlx-cli --locked sqlx-cli --no-default-features --features postgres
           SKIP_DOCKER=true ./scripts/init_db.sh
 
       - name: Run cargo-taurpaulin
