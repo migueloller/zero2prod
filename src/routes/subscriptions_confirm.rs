@@ -7,8 +7,8 @@ pub struct Parameters {
     subscription_token: String,
 }
 
-#[tracing::instrument(name = "Confirming a pending subscriber.", skip(parameters, pool))]
-pub async fn confirm(parameters: web::Query<Parameters>, pool: web::Data<PgPool>) -> HttpResponse {
+#[tracing::instrument(name = "Confirming a pending subscriber.", skip(pool, parameters))]
+pub async fn confirm(pool: web::Data<PgPool>, parameters: web::Query<Parameters>) -> HttpResponse {
     let id = match get_subscriber_id_from_token(&pool, &parameters.subscription_token).await {
         Ok(id) => id,
         Err(_) => return HttpResponse::InternalServerError().finish(),
