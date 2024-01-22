@@ -82,6 +82,44 @@ pub async fn subscribe(
 }
 
 #[tracing::instrument(
+    name = "Saving new subscriber details in the database.",
+    skip(transaction, new_subscriber)
+)]
+pub async fn insert_subscriber(
+    transaction: &mut Transaction<'_, Postgres>,
+    new_subscriber: &NewSubscriber,
+) -> Result<Uuid, sqlx::Error> {
+    let subscriber_id = Uuid::new_v4();
+    let query = sqlx::query!(
+        r#"
+            insert into subscriptions (id, email, name, subscribed_at, status)
+            values ($1, $2, $3, $4, 'pending_confirmation')
+        "#,
+        subscriber_id,
+        new_subscriber.email.as_ref(),
+        new_subscriber.name.as_ref(),
+        Utc::now(),
+    );
+
+    transaction.execute(query).await.map_err(|e| {
+        tracing::error!("Failed to execute query: {:?}", e);
+
+        e
+    })?;
+
+    Ok(subscriber_id)
+}
+
+/// Generate a random 25-characters-long case-sensitive subscription token.
+fn generate_subscription_token() -> String {
+    let mut rng = thread_rng();
+    std::iter::repeat_with(|| rng.sample(Alphanumeric))
+        .map(char::from)
+        .take(25)
+        .collect()
+}
+
+#[tracing::instrument(
     name = "Storing subscription token in the database.",
     skip(transaction, subscription_token)
 )]
@@ -135,42 +173,4 @@ pub async fn send_confirmation_email(
     email_client
         .send_email(new_subscriber.email, "Welcome!", &html_body, &plain_body)
         .await
-}
-
-#[tracing::instrument(
-    name = "Saving new subscriber details in the database.",
-    skip(transaction, new_subscriber)
-)]
-pub async fn insert_subscriber(
-    transaction: &mut Transaction<'_, Postgres>,
-    new_subscriber: &NewSubscriber,
-) -> Result<Uuid, sqlx::Error> {
-    let subscriber_id = Uuid::new_v4();
-    let query = sqlx::query!(
-        r#"
-            insert into subscriptions (id, email, name, subscribed_at, status)
-            values ($1, $2, $3, $4, 'pending_confirmation')
-        "#,
-        subscriber_id,
-        new_subscriber.email.as_ref(),
-        new_subscriber.name.as_ref(),
-        Utc::now(),
-    );
-
-    transaction.execute(query).await.map_err(|e| {
-        tracing::error!("Failed to execute query: {:?}", e);
-
-        e
-    })?;
-
-    Ok(subscriber_id)
-}
-
-/// Generate a random 25-characters-long case-sensitive subscription token.
-fn generate_subscription_token() -> String {
-    let mut rng = thread_rng();
-    std::iter::repeat_with(|| rng.sample(Alphanumeric))
-        .map(char::from)
-        .take(25)
-        .collect()
 }
