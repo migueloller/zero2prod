@@ -14,12 +14,14 @@ name = "zero2prod"
 
 [dependencies]
 actix-web = "4"
+anyhow = "1"
 chrono = { version = "0.4.22", default-features = false, features = ["clock"] }
 config = "0.13"
 rand = { version = "0.8", features = ["std_rng"] }
 secrecy = { version = "0.8", features = ["serde"] }
 serde = { version = "1", features = ["derive"] }
 serde-aux = "4"
+thiserror = "1"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 tracing = { version = "0.1", features = ["log"] }
 tracing-actix-web = "0.7"
