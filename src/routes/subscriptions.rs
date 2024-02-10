@@ -30,7 +30,7 @@ impl TryFrom<FormData> for NewSubscriber {
 }
 
 #[tracing::instrument(
-    name = "Adding a new subscriber.",
+    name = "Adding a new subscriber",
     skip(form, pool, email_client, base_url),
     fields(
         subscriber_email = %form.email,
@@ -98,7 +98,7 @@ impl ResponseError for SubscribeError {
 }
 
 #[tracing::instrument(
-    name = "Saving new subscriber details in the database.",
+    name = "Saving new subscriber details in the database",
     skip(transaction, new_subscriber)
 )]
 pub async fn insert_subscriber(
@@ -132,7 +132,7 @@ fn generate_subscription_token() -> String {
 }
 
 #[tracing::instrument(
-    name = "Storing subscription token in the database.",
+    name = "Storing subscription token in the database",
     skip(transaction, subscription_token)
 )]
 pub async fn store_token(
@@ -182,7 +182,7 @@ pub fn error_chain_fmt(
 }
 
 #[tracing::instrument(
-    name = "Sending a new confirmation emmail to a new subscriber."
+    name = "Sending a new confirmation emmail to a new subscriber"
     skip(email_client, new_subscriber, base_url, subscription_token)
 )]
 pub async fn send_confirmation_email(

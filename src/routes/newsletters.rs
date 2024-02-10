@@ -59,7 +59,7 @@ impl ResponseError for PublishError {
     }
 }
 
-#[tracing::instrument(name = "Validate credentials.", skip(credentials, pool))]
+#[tracing::instrument(name = "Validate credentials", skip(credentials, pool))]
 async fn validate_credentials(
     credentials: Credentials,
     pool: &PgPool,
@@ -111,7 +111,7 @@ fn verify_password_hash(
         .map_err(PublishError::AuthError)
 }
 
-#[tracing::instrument(name = "Get stored credentials.", skip(username, pool))]
+#[tracing::instrument(name = "Get stored credentials", skip(username, pool))]
 async fn get_stored_credentials(
     username: &str,
     pool: &PgPool,
@@ -133,7 +133,7 @@ async fn get_stored_credentials(
 }
 
 #[tracing::instrument(
-  name = "Publish a newsletter issue.",
+  name = "Publish a newsletter issue",
   skip(body, pool, email_client, request),
   fields(username=tracing::field::Empty, user_id=tracing::field::Empty)
 )]

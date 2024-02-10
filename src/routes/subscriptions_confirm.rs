@@ -27,7 +27,7 @@ pub async fn confirm(pool: web::Data<PgPool>, parameters: web::Query<Parameters>
 }
 
 #[tracing::instrument(
-    name = "Retrieving subscriber ID from the database using their token.",
+    name = "Retrieving subscriber ID from the database using their token",
     skip(pool, subscription_token)
 )]
 pub async fn get_subscriber_id_from_token(
@@ -49,7 +49,7 @@ pub async fn get_subscriber_id_from_token(
     Ok(result.map(|r| r.subscriber_id))
 }
 
-#[tracing::instrument(name = "Marking subscriber as confirmed.", skip(pool, subscriber_id))]
+#[tracing::instrument(name = "Marking subscriber as confirmed", skip(pool, subscriber_id))]
 pub async fn confirm_subscriber(pool: &PgPool, subscriber_id: Uuid) -> Result<(), sqlx::Error> {
     sqlx::query!(
         r#"update subscriptions set status = 'confirmed' where id = $1"#,
