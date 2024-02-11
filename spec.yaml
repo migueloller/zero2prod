@@ -34,12 +34,6 @@ services:
       - key: APP_DATABASE__DATABASE_NAME
         scope: RUN_TIME
         value: ${newsletter.DATABASE}
-      - key: APP_APPLICATION__HMAC_SECRET
-        scope: RUN_TIME
-        value: ${HMAC_SECRET}
-      - key: APP_REDIS_URI
-        scope: RUN_TIME
-        value: ${REDIS_URI}
 databases:
   - engine: PG
     name: newsletter
