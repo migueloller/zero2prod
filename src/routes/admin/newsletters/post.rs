@@ -1,11 +1,9 @@
 use crate::authentication::UserId;
 use crate::domain::SubscriberEmail;
 use crate::email_client::EmailClient;
-use crate::routes::admin::dashboard::get_username;
-use crate::routes::error_chain_fmt;
-use actix_web::http::header::HeaderValue;
-use actix_web::http::{header, StatusCode};
-use actix_web::{web, HttpResponse, ResponseError};
+use crate::utils::{e500, see_other};
+use actix_web::{web, HttpResponse};
+use actix_web_flash_messages::FlashMessage;
 use anyhow::Context;
 use sqlx::PgPool;
 
@@ -16,58 +14,18 @@ pub struct FormData {
     text_content: String,
 }
 
-#[derive(thiserror::Error)]
-pub enum PublishError {
-    #[error("Authentication failed.")]
-    AuthError(#[source] anyhow::Error),
-    #[error(transparent)]
-    UnexpectedError(#[from] anyhow::Error),
-}
-
-impl std::fmt::Debug for PublishError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        error_chain_fmt(self, f)
-    }
-}
-
-impl ResponseError for PublishError {
-    fn error_response(&self) -> HttpResponse {
-        match self {
-            PublishError::UnexpectedError(_) => {
-                HttpResponse::new(StatusCode::INTERNAL_SERVER_ERROR)
-            }
-            PublishError::AuthError(_) => {
-                let mut response = HttpResponse::new(StatusCode::UNAUTHORIZED);
-                let header_value = HeaderValue::from_str(r#"Basic realm="publish""#).unwrap();
-
-                response
-                    .headers_mut()
-                    .insert(header::WWW_AUTHENTICATE, header_value);
-
-                response
-            }
-        }
-    }
-}
-
 #[tracing::instrument(
   name = "Publish a newsletter issue",
   skip(body, pool, email_client),
-  fields(username=tracing::field::Empty, user_id=tracing::field::Empty)
+  fields(user_id=%*user_id)
 )]
 pub async fn publish_newsletter(
     body: web::Form<FormData>,
     pool: web::Data<PgPool>,
     email_client: web::Data<EmailClient>,
     user_id: web::ReqData<UserId>,
-) -> Result<HttpResponse, PublishError> {
-    let user_id = user_id.into_inner();
-    let username = get_username(*user_id, &pool).await?;
-
-    tracing::Span::current().record("username", &tracing::field::display(&username));
-    tracing::Span::current().record("user_id", &tracing::field::display(&user_id));
-
-    let subscribers = get_confirmed_subscribers(&pool).await?;
+) -> Result<HttpResponse, actix_web::Error> {
+    let subscribers = get_confirmed_subscribers(&pool).await.map_err(e500)?;
 
     for subscriber in subscribers {
         match subscriber {
@@ -82,7 +40,8 @@ pub async fn publish_newsletter(
                     .await
                     .with_context(|| {
                         format!("Failed to send newsletter issue to {}.", subscriber.email)
-                    })?;
+                    })
+                    .map_err(e500)?;
             }
             Err(error) => {
                 tracing::warn!(
@@ -94,7 +53,9 @@ pub async fn publish_newsletter(
         }
     }
 
-    Ok(HttpResponse::Ok().finish())
+    FlashMessage::info("The newsletter issue has been published!").send();
+
+    Ok(see_other("/admin/newsletters"))
 }
 
 struct ConfirmedSubscriber {
