@@ -40,6 +40,7 @@ pub async fn publish_newsletter_form(flash_messages: IncomingFlashMessages) -> H
         <br />
         <button type="submit">Submit newsletter</button>
     </form>
+    <p><a href="/admin/dashboard">&lt;- Back</a></p>
 </body>
 </html>"#
     );
