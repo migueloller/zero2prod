@@ -34,6 +34,14 @@ services:
       - key: APP_DATABASE__DATABASE_NAME
         scope: RUN_TIME
         value: ${newsletter.DATABASE}
+      - key: APP_APPLICATION__HMAC_SECRET
+        scope: RUN_TIME
+        type: SECRET
+        value: EV[1:yxEozuDFv+M49oFc4pRbuoU8BG0yLFqc:/xDCdDB3OkCNbaCM8NYj3m4iBpQB3lfIKEfZlse3LWgPBL3arAy4wEko6TceWNW0//ZXlOtOaUrLlHVx296LEX/TZGDyqKrB8UjBKdJhjHTN1200i5Dk9LB6SukkhOZl+nov03D8800=]
+      - key: APP_REDIS_URI
+        scope: RUN_TIME
+        type: SECRET
+        value: EV[1:Cn3QVs3WjSzQ41FTa7GgvJhZWg6VhWMQ:aJNnLQ1bU1uslr/12lyvPnT8ZV54e4XxshLyDgrdKVbRB0oWmjS3uzYL/gcrVPMtT+he/4gXcmItiw0vQNbzllA6xZi0XjK7EQnM+aewaMXtjLYUynnZMyiNAwfaQCFxqOb+wS2o3xVqQ4se879n6vCQYUf8cTVDws20hJg=]
 databases:
   - engine: PG
     name: newsletter
